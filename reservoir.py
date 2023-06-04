@@ -22,6 +22,7 @@ class ReservoirModel:
         self.states = []
         self.outputs = [np.zeros(max_notes + 1)]
 
+        self.step = 0 
 
 
         # step 2 output reservoir
@@ -52,13 +53,11 @@ class ReservoirModel:
 
         # update logs
         self.outputs.append(output)
-        self.outputs = self.outputs[-20:]
-        self.states.append(state)
-        self.states = self.states[-20:]
+        # self.outputs = self.outputs[-20:]
+        self.states.append(state[0])
+        # self.states = self.states[-20:]
 
-        # print saving file
-        if len(self.states)>0:
-            np.save('states.npy', np.array(self.states))
+        pickle.dump((np.array(self.states), self.step), open('states', 'wb'))
 
         # write info to display on GUI
         to_gui = {
@@ -67,6 +66,8 @@ class ReservoirModel:
             "sample": list(output),
             "sample_idx": np.argmax(output),
         }
+
+        self.step += 1 
 
 
         return np.argmax(output), to_gui

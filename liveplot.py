@@ -4,36 +4,37 @@ import numpy as np
 
 import matplotlib.animation as animation
 
+import pickle
+
 def animate(i):
     # load data
-    states = np.load("states.npy")
-    states = np.squeeze(states)
+    states, index = pickle.load(open("states", "rb"))
+    # states = np.squeeze(states)
     ax.set_ylim([-1,1])
     ax.set_xlim([0,states.shape[0]])    
     print("this is the shape", states.shape)
 
+    print(index, len(datas[0]))
 
-    if len(states.shape) < 2:
-        pass
-
-
+    
     # case where we restart
-    elif states.shape[0] < len(datas[0]):
+    if index < len(datas[0]) - 1:
+        print('we are here')
+        to_use = min(states.shape[1], 20)
+
+        fig.clf()
 
         for i in range(to_use):
-            datas[i] += list(states[:, i])
-            lines[i].set_data(np.arange(states.shape[0]), datas[i])
+            datas[i] = list(states[:, i])
+            lines[i].set_data(np.arange(len(datas[i])), datas[i])
 
     else:
         to_use = min(states.shape[1], 20)
-
         for i in range(to_use):
             datas[i] += list(states[len(datas[i]):, i])
-            lines[i].set_data(np.arange(states.shape[0]), datas[i])
+            lines[i].set_data(np.arange(len(datas[i])), datas[i])
 
 
-    print("this is the shape", states.shape)
-    print("arrange", np.arange(states.shape[0]).shape)
 
     # states_plot.set_data(np.arange(states.shape[0][j:]), states[j])
 
